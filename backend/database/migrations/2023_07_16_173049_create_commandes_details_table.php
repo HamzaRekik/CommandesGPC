@@ -16,7 +16,7 @@ return new class extends Migration
             $table->integer('id_demande');
             $table->integer('produit');
             $table->integer('qte');
-
+            $table->timestamps();
 
         });
     }

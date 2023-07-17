@@ -4,13 +4,13 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Produit;
+use App\Models\Commandes_detail;
 
-class ProduitsController extends Controller
+class CommandesDetailsController extends Controller
 {
     function index(){
         try{
-            return Produit::All();
+            return Commandes_detail::All();
         }catch(Exception $e){
            echo "An error occured ".$e->getMessage();
         }
@@ -20,46 +20,47 @@ class ProduitsController extends Controller
 
     function create(){
         try{
-            Produit::create([
-                "type" =>request('type'),
-                "name" =>request('name'),
+            Commandes_detail::create([
+                "id_demande" =>request('id_demande'),
+                "produit" =>request('produit'),
+                "qte" =>request('qte'),
 
             ]);
-                return "Product Created Successfuly";
+                return "Commande Detail Created Successfuly";
         }catch(Exception $e){
             echo "An error occured ".$e->getMessage();
          }
 
     }
-    function update(Produit $produit){
+    function update(Commandes_detail $detail){
         try{
-            $produit->update([
+            $detail->update([
                 "type" =>request('type'),
                 "name" =>request('name'),
                 
             ]);
-                return "Product ".$produit->id." Updated Successfuly";
+                return "Commande Detail ".$detail->id." Updated Successfuly";
         }catch(Exception $e){
             echo "An error occured ".$e->getMessage();
          }
        
     }
 
-    function delete(Produit $produit){
+    function delete(Commandes_detail $detail){
         try{
-            $produit->delete();
-                return "Product ".$produit->id." Deleted Successfuly";
+            $detail->delete();
+                return "Commande Detail ".$detail->id." Deleted Successfuly";
         }catch(Exception $e){
             echo "An error occured ".$e->getMessage();
          }
         
     }
 
-    function getProductByID(Produit $produit){
+    function getDetailByID(Commandes_detail $id){
 
         try {
-            $produit = Produit::find($produit);
-            return $produit;
+            $detail = Commandes_detail::find($id);
+            return $detail;
         }catch(Exception $e){
             echo "An error occured ".$e->getMessage();
          } 
