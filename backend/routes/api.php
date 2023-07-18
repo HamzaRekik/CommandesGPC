@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 Use App\Http\Controllers\Api\CommandesController;
 Use App\Http\Controllers\Api\ProduitsController;
 Use App\Http\Controllers\Api\CommandesDetailsController;
+Use App\Http\Controllers\Api\AuthController;
 
 
 /*
@@ -17,6 +18,9 @@ Use App\Http\Controllers\Api\CommandesDetailsController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+Route::post('/signup', [AuthController::class, 'sign_up']);//Sign up route
+Route::post('/login', [AuthController::class, 'login']);// login route
+
 //Commandes Routes
 Route::get('/commandes' , [CommandesController::class,'index']); //Get All Commandes
 Route::get('/commandes/{commande}' , [CommandesController::class,'GetCommandeByID']); //Single Commande
@@ -42,6 +46,10 @@ Route::delete('/c_details/delete/{detail}' , [CommandesDetailsController::class,
 //-----------------------------------------------------------------------------------//
 
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+
+// Route::group(['middleware' => ['auth:sanctum']], function () {
+
+//     });
