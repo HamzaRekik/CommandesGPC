@@ -12,20 +12,20 @@ class AuthController extends Controller
 {
     public function sign_up(Request $request)
     {
-        $data = $request->validate([
-            'username' => 'required|string|unique:tb_users,username',
-            'password' => 'required|string|confirmed',
-            'email' => 'required|string|unique:tb_users,email',
-            'first_name' => 'required|string',
-            'last_name' => 'required|string'
-        ]);
-    
+        // $request->validate([
+        //     'username' => 'required|string|unique:tb_users,username',
+        //     'password' => 'required|string|confirmed',
+        //     'email' => 'required|string|unique:tb_users,email',
+        //     'first_name' => 'required|string',
+        //     'last_name' => 'required|string'
+        // ]);
+        
         $user = User::create([
-            'username' => $data['username'],
-            'password' => Hash::make($data['password']),
-            'email' => $data['email'],
-            'first_name' => $data['first_name'],
-            'last_name' => $data['last_name']
+            'username' => $request->username,
+            'password' => Hash::make($request->password),
+            'email' => $request->email,
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
         ]);
     
         $token = $user->createToken('apiToken')->plainTextToken;
@@ -61,5 +61,14 @@ class AuthController extends Controller
         ];
 
         return response($res, 201);
+    }
+
+    public function logout(Request $request)
+    {
+        auth()->user()->tokens()->delete();
+        return [
+            'message' => 'user logged out'
+        ];
+
     }
 }

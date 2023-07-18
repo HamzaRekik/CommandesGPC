@@ -15,8 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('username');
             $table->string('email')->unique();
-            $table->integer('groupe_id');
-            // $table->foreignId('groupe_id')->constrained('tb_groups');
+            $table->integer('groupe_id')->default(3);
             $table->string('first_name');
             $table->string('last_name');     
             $table->string('password');

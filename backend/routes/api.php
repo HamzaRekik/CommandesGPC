@@ -21,6 +21,7 @@ Use App\Http\Controllers\Api\AuthController;
 Route::post('/signup', [AuthController::class, 'sign_up']);//Sign up route
 Route::post('/login', [AuthController::class, 'login']);// login route
 
+
 //Commandes Routes
 Route::get('/commandes' , [CommandesController::class,'index']); //Get All Commandes
 Route::get('/commandes/{commande}' , [CommandesController::class,'GetCommandeByID']); //Single Commande
@@ -46,10 +47,8 @@ Route::delete('/c_details/delete/{detail}' , [CommandesDetailsController::class,
 //-----------------------------------------------------------------------------------//
 
 
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
 
-// Route::group(['middleware' => ['auth:sanctum']], function () {
 
-//     });
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::post('/logout', [AuthController::class, 'logout']);// Logout route
+    });
