@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:application/produit.dart';
@@ -25,7 +24,8 @@ class Order extends StatefulWidget {
 
 class _OrderState extends State<Order> {
   final formKey = GlobalKey<FormState>();
-  int _value = 1;
+  List<Produit> _items = [];
+  String? selectedItem;
   List<Map<String, dynamic>> products = [];
 
   @override
@@ -34,15 +34,24 @@ class _OrderState extends State<Order> {
     fetchProduct(); // Call the API when the widget is initialized
   }
 
-  fetchProduct() async {
-    final response =
-        await http.get(Uri.parse('http://127.0.0.1:8000/api/produits'));
+  Future<void> fetchProduct() async {
+    try {
+      final response =
+          await http.get(Uri.parse('http://192.168.1.7/api/produits'));
 
-    if (response.statusCode == 200) {
-      products = List<Map<String, dynamic>>.from(json.decode(response.body));
-      setState(() {});
-    } else {
-      throw Exception("Failed To Load Product");
+      if (response.statusCode == 200) {
+        final List<dynamic> products = json.decode(response.body);
+        List<Produit> items = products.map((item) {
+          return Produit(item['id'], item['name']);
+        }).toList();
+        setState(() {
+          _items = items;
+        });
+      } else {
+        print('API request failed with status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error during API request: $e');
     }
   }
 
@@ -78,7 +87,7 @@ class _OrderState extends State<Order> {
     List<String> produits = ['Panneau', 'Onduleur', 'Variateur'];
 
     String? selectedProduct = 'Panneau';
-    String? selectedItem = 'Ariana';
+    String? selectedItemG = 'Ariana';
 
     return Scaffold(
       key: _scaffoldKey,
@@ -110,7 +119,7 @@ class _OrderState extends State<Order> {
                   decoration: InputDecoration(labelText: "Gouvernorat"),
                   icon: const Icon(Icons.keyboard_arrow_down),
                   hint: Text('Gouvernorat'),
-                  value: selectedItem,
+                  value: selectedItemG,
                   onChanged: (item) => setState(() => selectedItem = item),
                   items: gouvernorats.map((String gouvernorat) {
                     return DropdownMenuItem<String>(
@@ -143,17 +152,18 @@ class _OrderState extends State<Order> {
                 ),
                 DropdownButtonFormField<String>(
                   icon: const Icon(Icons.keyboard_arrow_down),
-                  value: _value.toString(),
+                  value: selectedItem,
                   onChanged: (item) {
                     setState(() {
-                      _value = int.parse(item!);
+                      selectedItem = item;
                     });
                   },
-                  items: products.map((product) {
+                  items:
+                      _items.map<DropdownMenuItem<String>>((Produit produit) {
                     return DropdownMenuItem<String>(
-                      value: product["id"].toString(),
+                      value: produit.id.toString(),
                       child: Text(
-                        product["name"].toString(),
+                        produit.name,
                         style: TextStyle(fontSize: 22),
                       ),
                     );
