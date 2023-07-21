@@ -64,4 +64,12 @@ class ProduitsController extends Controller
             echo "An error occured ".$e->getMessage();
          } 
     }
+
+    function getProductsByType($type){
+        try{
+            return Produit::where('type', $type)->get();
+        }catch(Exception $e){
+           echo "An error occured ".$e->getMessage();
+        }
+    }
 }
