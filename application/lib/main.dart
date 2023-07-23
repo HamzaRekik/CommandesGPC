@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:application/produit.dart';
+import 'package:counter/counter.dart';
 
 void main() {
   runApp(GPC());
@@ -24,20 +25,53 @@ class Order extends StatefulWidget {
 
 class _OrderState extends State<Order> {
   final formKey = GlobalKey<FormState>();
-  List<Produit> _items = [];
-  String? selectedItem;
-  List<Map<String, dynamic>> products = [];
+  List<Produit> _items =
+      []; //list of filtred products returned by fetchProduct()
 
+  List<String> gouvernorats = [
+    'Ariana',
+    "Béja",
+    "Ben Arous",
+    "Bizerte",
+    "Gabès",
+    "Gafsa",
+    "Jendouba",
+    "Kairouan",
+    "Kasserine",
+    "Kébili",
+    "Le Kef",
+    "Mahdia",
+    "Manouba",
+    "Medenine",
+    "Monastir",
+    "Nabeul",
+    "Sfax",
+    "Sidi Bouzid",
+    "Siliana",
+    "Sousse",
+    "Tataouine",
+    "Tozeur",
+    "Tunis",
+    "Zaghouan"
+  ]; //list of gouvernorats
+  List<String> produits = [
+    'Panneau',
+    'Onduleur',
+    'Variateur'
+  ]; // list of product types
+  String? selectedItem; // variable take value of selected product reference
+  String? selectedProduct; // variable take value of selected product type
+  String? selectedItemG; //variable take value of selected Governorat
+  bool? isVisible = false;
   @override
   void initState() {
     super.initState();
-    fetchProduct(); // Call the API when the widget is initialized
   }
 
-  Future<void> fetchProduct() async {
+  Future<void> fetchProduct(String type) async {
     try {
-      final response =
-          await http.get(Uri.parse('http://192.168.1.7/api/produits'));
+      final response = await http
+          .get(Uri.parse('http://192.168.1.6/api/produits/type/$type'));
 
       if (response.statusCode == 200) {
         final List<dynamic> products = json.decode(response.body);
@@ -46,6 +80,7 @@ class _OrderState extends State<Order> {
         }).toList();
         setState(() {
           _items = items;
+          selectedItem = null;
         });
       } else {
         print('API request failed with status code: ${response.statusCode}');
@@ -58,36 +93,6 @@ class _OrderState extends State<Order> {
   @override
   Widget build(BuildContext context) {
     final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-    List<String> gouvernorats = [
-      'Ariana',
-      "Béja",
-      "Ben Arous",
-      "Bizerte",
-      "Gabès",
-      "Gafsa",
-      "Jendouba",
-      "Kairouan",
-      "Kasserine",
-      "Kébili",
-      "Le Kef",
-      "Mahdia",
-      "Manouba",
-      "Medenine",
-      "Monastir",
-      "Nabeul",
-      "Sfax",
-      "Sidi Bouzid",
-      "Siliana",
-      "Sousse",
-      "Tataouine",
-      "Tozeur",
-      "Tunis",
-      "Zaghouan"
-    ]; // Your list of gouvernorats
-    List<String> produits = ['Panneau', 'Onduleur', 'Variateur'];
-
-    String? selectedProduct = 'Panneau';
-    String? selectedItemG = 'Ariana';
 
     return Scaffold(
       key: _scaffoldKey,
@@ -95,7 +100,7 @@ class _OrderState extends State<Order> {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      backgroundColor: Color(0xFFffffff),
+      backgroundColor: Color.fromARGB(255, 242, 233, 233),
       body: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.only(left: 40, right: 40),
@@ -118,9 +123,16 @@ class _OrderState extends State<Order> {
                 DropdownButtonFormField<String>(
                   decoration: InputDecoration(labelText: "Gouvernorat"),
                   icon: const Icon(Icons.keyboard_arrow_down),
-                  hint: Text('Gouvernorat'),
+                  hint: Text("Sélectionnez votre gouvernorat"),
                   value: selectedItemG,
-                  onChanged: (item) => setState(() => selectedItem = item),
+                  onChanged: (item) => setState(() {
+                    if (item == null) {
+                      isVisible;
+                    } else {
+                      selectedItemG = item;
+                      isVisible = true;
+                    }
+                  }),
                   items: gouvernorats.map((String gouvernorat) {
                     return DropdownMenuItem<String>(
                       value: gouvernorat,
@@ -132,6 +144,7 @@ class _OrderState extends State<Order> {
                   }).toList(),
                 ),
                 TextFormField(
+                  enabled: isVisible,
                   decoration: InputDecoration(labelText: "Adresse"),
                 ),
                 DropdownButtonFormField<String>(
@@ -139,7 +152,10 @@ class _OrderState extends State<Order> {
                   icon: const Icon(Icons.keyboard_arrow_down),
                   hint: Text('Produit'),
                   value: selectedProduct,
-                  onChanged: (item) => setState(() => selectedProduct = item),
+                  onChanged: (item) => setState(() {
+                    selectedProduct = item;
+                    fetchProduct(selectedProduct.toString());
+                  }),
                   items: produits.map((String produit) {
                     return DropdownMenuItem<String>(
                       value: produit,
@@ -151,6 +167,11 @@ class _OrderState extends State<Order> {
                   }).toList(),
                 ),
                 DropdownButtonFormField<String>(
+                  hint: Text(
+                    "Veuillez choisir un référence",
+                    style: TextStyle(fontSize: 22),
+                  ),
+                  decoration: const InputDecoration(labelText: "Référence"),
                   icon: const Icon(Icons.keyboard_arrow_down),
                   value: selectedItem,
                   onChanged: (item) {
@@ -169,6 +190,24 @@ class _OrderState extends State<Order> {
                     );
                   }).toList(),
                 ),
+                Container(
+                    margin: EdgeInsets.only(top: 20),
+                    width: double.infinity,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text(
+                          "Quantité : ",
+                          style: TextStyle(fontSize: 22),
+                        ),
+                        Counter(
+                          min: 1,
+                          max: 10,
+                          bound: 1,
+                          step: 1,
+                        ),
+                      ],
+                    ))
               ],
             ),
           ),
