@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:application/produit.dart';
-import 'package:counter/counter.dart';
+// import 'package:counter/counter.dart';
 
 void main() {
   runApp(GPC());
@@ -63,16 +63,72 @@ class _OrderState extends State<Order> {
   String? selectedProduct; // variable take value of selected product type
   String? selectedItemG; //variable take value of selected Governorat
   bool? isVisible = false;
+  String? nameValue;
+  String? lastNameValue;
+  String? addresValue;
+  String? quantityValue;
+  int? idCommande;
+  int? idProduit;
+
   @override
   void initState() {
     super.initState();
+  }
+
+  Future<void> commandeDetail(String qte) async {
+    try {
+      Map<String, dynamic> request = {
+        // 'id_demande': '2',
+        // 'produit': '1',
+        'qte': qte.toString(),
+      };
+      final uri = Uri.parse("http://192.168.1.6/api/c_details/create");
+      final response = await http.post(uri, body: request);
+      if (response.statusCode == 200) {
+        // Request successful, handle the response if needed
+        print('Details Commande created successfully!');
+      } else {
+        // Request failed with a non-200 status code
+        print(
+            'Failed to create details commande. Status Code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error during API request aaaa: $e');
+    }
+  }
+
+  Future<void> createCommande(
+      String nom, String prenom, String region, String adresse) async {
+    try {
+      Map<String, dynamic> request = {
+        'user_id': "1",
+        'nom': nom,
+        'prenom': prenom,
+        'region': region,
+        'adresse': adresse,
+        'puissance': '55',
+        'etat': 'Réservée'
+      };
+      final uri = Uri.parse("http://192.168.1.6/api/commandes/create");
+      final response = await http.post(uri, body: request);
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseData = json.decode(response.body);
+        idCommande = responseData['id'] as int;
+        print('Commande created successfully!');
+      } else {
+        // Request failed with a non-200 status code
+        print('Failed to create commande. Status Code: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Exception occurred during the API call
+      print('Error during API request: $e');
+    }
   }
 
   Future<void> fetchProduct(String type) async {
     try {
       final response = await http
           .get(Uri.parse('http://192.168.1.6/api/produits/type/$type'));
-
       if (response.statusCode == 200) {
         final List<dynamic> products = json.decode(response.body);
         List<Produit> items = products.map((item) {
@@ -105,112 +161,132 @@ class _OrderState extends State<Order> {
         child: Container(
           padding: const EdgeInsets.only(left: 40, right: 40),
           child: Form(
-            key: formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Bienvenue !",
-                  style: TextStyle(
-                      fontSize: 30, color: Color.fromARGB(255, 4, 7, 31)),
-                ),
-                TextFormField(
-                  decoration: InputDecoration(labelText: "Nom"),
-                ),
-                TextFormField(
-                  decoration: InputDecoration(labelText: "Prénom"),
-                ),
-                DropdownButtonFormField<String>(
-                  decoration: InputDecoration(labelText: "Gouvernorat"),
-                  icon: const Icon(Icons.keyboard_arrow_down),
-                  hint: Text("Sélectionnez votre gouvernorat"),
-                  value: selectedItemG,
-                  onChanged: (item) => setState(() {
-                    if (item == null) {
-                      isVisible;
-                    } else {
-                      selectedItemG = item;
-                      isVisible = true;
-                    }
-                  }),
-                  items: gouvernorats.map((String gouvernorat) {
-                    return DropdownMenuItem<String>(
-                      value: gouvernorat,
-                      child: Text(
-                        gouvernorat,
-                        style: TextStyle(fontSize: 22),
-                      ),
-                    );
-                  }).toList(),
-                ),
-                TextFormField(
-                  enabled: isVisible,
-                  decoration: InputDecoration(labelText: "Adresse"),
-                ),
-                DropdownButtonFormField<String>(
-                  decoration: InputDecoration(labelText: "Produit"),
-                  icon: const Icon(Icons.keyboard_arrow_down),
-                  hint: Text('Produit'),
-                  value: selectedProduct,
-                  onChanged: (item) => setState(() {
-                    selectedProduct = item;
-                    fetchProduct(selectedProduct.toString());
-                  }),
-                  items: produits.map((String produit) {
-                    return DropdownMenuItem<String>(
-                      value: produit,
-                      child: Text(
-                        produit,
-                        style: TextStyle(fontSize: 22),
-                      ),
-                    );
-                  }).toList(),
-                ),
-                DropdownButtonFormField<String>(
-                  hint: Text(
-                    "Veuillez choisir un référence",
-                    style: TextStyle(fontSize: 22),
+              key: formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Bienvenue !",
+                    style: TextStyle(
+                        fontSize: 30, color: Color.fromARGB(255, 4, 7, 31)),
                   ),
-                  decoration: const InputDecoration(labelText: "Référence"),
-                  icon: const Icon(Icons.keyboard_arrow_down),
-                  value: selectedItem,
-                  onChanged: (item) {
-                    setState(() {
-                      selectedItem = item;
-                    });
-                  },
-                  items:
-                      _items.map<DropdownMenuItem<String>>((Produit produit) {
-                    return DropdownMenuItem<String>(
-                      value: produit.id.toString(),
-                      child: Text(
-                        produit.name,
-                        style: TextStyle(fontSize: 22),
-                      ),
-                    );
-                  }).toList(),
-                ),
-                Container(
-                    margin: EdgeInsets.only(top: 20),
-                    width: double.infinity,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text(
-                          "Quantité : ",
+                  TextFormField(
+                    decoration: InputDecoration(labelText: "Nom"),
+                    onChanged: (value) {
+                      setState(() {
+                        nameValue = value;
+                      });
+                    },
+                  ),
+                  TextFormField(
+                      decoration: InputDecoration(labelText: "Prénom"),
+                      onChanged: (value) {
+                        setState(() {
+                          lastNameValue = value;
+                        });
+                      }),
+                  DropdownButtonFormField<String>(
+                    decoration: InputDecoration(labelText: "Gouvernorat"),
+                    icon: const Icon(Icons.keyboard_arrow_down),
+                    hint: Text("Sélectionnez votre gouvernorat"),
+                    value: selectedItemG,
+                    onChanged: (item) => setState(() {
+                      if (item == null) {
+                        isVisible;
+                      } else {
+                        selectedItemG = item;
+                        isVisible = true;
+                      }
+                    }),
+                    items: gouvernorats.map((String gouvernorat) {
+                      return DropdownMenuItem<String>(
+                        value: gouvernorat,
+                        child: Text(
+                          gouvernorat,
                           style: TextStyle(fontSize: 22),
                         ),
-                        Counter(
-                          min: 1,
-                          max: 10,
-                          bound: 1,
-                          step: 1,
+                      );
+                    }).toList(),
+                  ),
+                  TextFormField(
+                      enabled: isVisible,
+                      decoration: InputDecoration(labelText: "Adresse"),
+                      onChanged: (value) {
+                        setState(() {
+                          addresValue = value;
+                        });
+                      }),
+                  DropdownButtonFormField<String>(
+                    decoration: InputDecoration(labelText: "Produit"),
+                    icon: const Icon(Icons.keyboard_arrow_down),
+                    hint: Text('Produit'),
+                    value: selectedProduct,
+                    onChanged: (item) => setState(() {
+                      selectedProduct = item;
+                      fetchProduct(selectedProduct.toString());
+                    }),
+                    items: produits.map((String produit) {
+                      return DropdownMenuItem<String>(
+                        value: produit,
+                        child: Text(
+                          produit,
+                          style: TextStyle(fontSize: 22),
                         ),
-                      ],
-                    ))
-              ],
-            ),
-          ),
+                      );
+                    }).toList(),
+                  ),
+                  DropdownButtonFormField<String>(
+                    hint: Text(
+                      "Veuillez choisir un référence",
+                      style: TextStyle(fontSize: 22),
+                    ),
+                    decoration: const InputDecoration(labelText: "Référence"),
+                    icon: const Icon(Icons.keyboard_arrow_down),
+                    value: selectedItem,
+                    onChanged: (item) {
+                      setState(() {
+                        selectedItem = item;
+                      });
+                    },
+                    items:
+                        _items.map<DropdownMenuItem<String>>((Produit produit) {
+                      return DropdownMenuItem<String>(
+                        value: produit.id.toString(),
+                        child: Text(
+                          produit.name,
+                          style: TextStyle(fontSize: 22),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                  TextFormField(
+                      decoration: InputDecoration(labelText: "Quantité"),
+                      onChanged: (value) {
+                        setState(() {
+                          quantityValue = value;
+                        });
+                      }),
+                  ElevatedButton(
+                      child: Text(
+                        "Commander",
+                        style: TextStyle(fontSize: 22),
+                      ),
+                      onPressed: () {
+                        createCommande(
+                            nameValue.toString(),
+                            lastNameValue.toString(),
+                            selectedItemG.toString(),
+                            addresValue.toString());
+                        commandeDetail(quantityValue.toString());
+                      })
+                  // Counter(
+                  //   min: 1,
+                  //   max: 10,
+                  //   bound: 1,
+                  //   step: 1,
+                  // ),
+                ],
+              )),
         ),
       ),
     );
