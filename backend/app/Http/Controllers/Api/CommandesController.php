@@ -20,7 +20,7 @@ class CommandesController extends Controller
 
     function create(){
         try{
-            Commande::create([
+            $commande = Commande::create([
                 "user_id" =>request('user_id'),
                 "nom" =>request('nom'),
                 "prenom" =>request('prenom'),
@@ -30,7 +30,7 @@ class CommandesController extends Controller
                 "etat" =>request('etat'),
     
             ]);
-                return "Commande Created Successfuly";
+            return response()->json($commande);
         }catch(Exception $e){
             echo "An error occured ".$e->getMessage();
          }

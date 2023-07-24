@@ -20,13 +20,14 @@ class CommandesDetailsController extends Controller
 
     function create(){
         try{
-            Commandes_detail::create([
+            $commandeDetail=Commandes_detail::create([
                 "id_demande" =>request('id_demande'),
                 "produit" =>request('produit'),
                 "qte" =>request('qte'),
 
             ]);
-                return "Commande Detail Created Successfuly";
+
+            return response()->json($commandeDetail);
         }catch(Exception $e){
             echo "An error occured ".$e->getMessage();
          }

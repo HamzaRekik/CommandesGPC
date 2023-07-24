@@ -59,33 +59,32 @@ class _OrderState extends State<Order> {
     'Onduleur',
     'Variateur'
   ]; // list of product types
-  String? selectedItem; // variable take value of selected product reference
-  String? selectedProduct; // variable take value of selected product type
-  String? selectedItemG; //variable take value of selected Governorat
-  bool? isVisible = false;
-  String? nameValue;
-  String? lastNameValue;
-  String? addresValue;
-  String? quantityValue;
-  int? idCommande;
-  int? idProduit;
+  String? selectedItem; // variable take id of selected product reference
+  String? selectedProduct; // variable take id of selected product type
+  String? selectedItemG; //variable take id of selected Governorat
+  bool? isVisible = false; // controls address text input visibility
+  String? nameValue; // value of firstname textfield
+  String? lastNameValue; // value of lastname textfield
+  String? addresValue; // value of address textfield
+  String? quantityValue; // value of quantity textfield
 
   @override
   void initState() {
     super.initState();
   }
 
-  Future<void> commandeDetail(String qte) async {
+  Future<void> commandeDetail(
+      String? qte, String? produitID, String? commandeID) async {
     try {
       Map<String, dynamic> request = {
-        // 'id_demande': '2',
-        // 'produit': '1',
-        'qte': qte.toString(),
+        'id_demande': commandeID,
+        'produit': produitID,
+        'qte': qte,
       };
-      final uri = Uri.parse("http://192.168.1.6/api/c_details/create");
+      final uri = Uri.parse("http://192.168.1.4/api/c_details/create");
       final response = await http.post(uri, body: request);
+      print('Response Body: ${response.body}');
       if (response.statusCode == 200) {
-        // Request successful, handle the response if needed
         print('Details Commande created successfully!');
       } else {
         // Request failed with a non-200 status code
@@ -109,12 +108,14 @@ class _OrderState extends State<Order> {
         'puissance': '55',
         'etat': 'Réservée'
       };
-      final uri = Uri.parse("http://192.168.1.6/api/commandes/create");
+      final uri = Uri.parse("http://192.168.1.4/api/commandes/create");
       final response = await http.post(uri, body: request);
+
       if (response.statusCode == 200) {
+        print(response.body);
         Map<String, dynamic> responseData = json.decode(response.body);
-        idCommande = responseData['id'] as int;
-        print('Commande created successfully!');
+        int idCommande = responseData["id"];
+        commandeDetail(quantityValue, selectedItem, idCommande.toString());
       } else {
         // Request failed with a non-200 status code
         print('Failed to create commande. Status Code: ${response.statusCode}');
@@ -128,7 +129,7 @@ class _OrderState extends State<Order> {
   Future<void> fetchProduct(String type) async {
     try {
       final response = await http
-          .get(Uri.parse('http://192.168.1.6/api/produits/type/$type'));
+          .get(Uri.parse('http://192.168.1.4/api/produits/type/$type'));
       if (response.statusCode == 200) {
         final List<dynamic> products = json.decode(response.body);
         List<Produit> items = products.map((item) {
@@ -277,7 +278,7 @@ class _OrderState extends State<Order> {
                             lastNameValue.toString(),
                             selectedItemG.toString(),
                             addresValue.toString());
-                        commandeDetail(quantityValue.toString());
+                        ;
                       })
                   // Counter(
                   //   min: 1,
