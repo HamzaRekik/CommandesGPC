@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:application/produit.dart';
-// import 'package:counter/counter.dart';
+import 'package:application/commandes_list.dart';
 
 void main() {
   runApp(GPC());
@@ -13,7 +13,7 @@ class GPC extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Order(),
+      home: CommandesList(),
     );
   }
 }
@@ -83,11 +83,9 @@ class _OrderState extends State<Order> {
       };
       final uri = Uri.parse("http://192.168.1.4/api/c_details/create");
       final response = await http.post(uri, body: request);
-      print('Response Body: ${response.body}');
       if (response.statusCode == 200) {
         print('Details Commande created successfully!');
       } else {
-        // Request failed with a non-200 status code
         print(
             'Failed to create details commande. Status Code: ${response.statusCode}');
       }
@@ -167,9 +165,12 @@ class _OrderState extends State<Order> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    "Bienvenue !",
+                    "Passez votre commande !",
                     style: TextStyle(
-                        fontSize: 30, color: Color.fromARGB(255, 4, 7, 31)),
+                      fontSize: 27,
+                      color: Color.fromARGB(255, 4, 7, 31),
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
                   TextFormField(
                     decoration: InputDecoration(labelText: "Nom"),
@@ -189,7 +190,10 @@ class _OrderState extends State<Order> {
                   DropdownButtonFormField<String>(
                     decoration: InputDecoration(labelText: "Gouvernorat"),
                     icon: const Icon(Icons.keyboard_arrow_down),
-                    hint: Text("Sélectionnez votre gouvernorat"),
+                    hint: Text(
+                      "Sélectionnez votre gouvernorat",
+                      style: TextStyle(fontSize: 22),
+                    ),
                     value: selectedItemG,
                     onChanged: (item) => setState(() {
                       if (item == null) {
@@ -220,7 +224,10 @@ class _OrderState extends State<Order> {
                   DropdownButtonFormField<String>(
                     decoration: InputDecoration(labelText: "Produit"),
                     icon: const Icon(Icons.keyboard_arrow_down),
-                    hint: Text('Produit'),
+                    hint: Text(
+                      'Produit',
+                      style: TextStyle(fontSize: 22),
+                    ),
                     value: selectedProduct,
                     onChanged: (item) => setState(() {
                       selectedProduct = item;
@@ -278,7 +285,6 @@ class _OrderState extends State<Order> {
                             lastNameValue.toString(),
                             selectedItemG.toString(),
                             addresValue.toString());
-                        ;
                       })
                   // Counter(
                   //   min: 1,

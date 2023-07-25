@@ -34,6 +34,7 @@ Route::delete('/commandes/delete/{commande}' , [CommandesController::class,'dele
 Route::get('/produits' , [ProduitsController::class,'index']); //Get All Products
 Route::get('/produits/{produit}' , [ProduitsController::class,'GetProductByID']); //Single Product
 Route::get('/produits/type/{type}' , [ProduitsController::class,'GetProductsByType']); //GET Products by type
+Route::get('/mescommandes' , [ProduitsController::class,'getProductWithQuantity']); //Join between product and quantity
 Route::post('/produits/create' , [ProduitsController::class,'create']); //Create Product
 Route::put('/produits/update/{produit}' , [ProduitsController::class,'update']); //Update Product
 Route::delete('/produits/delete/{produit}' , [ProduitsController::class,'delete']); //delete Product

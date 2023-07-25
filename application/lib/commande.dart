@@ -1,12 +1,7 @@
 class Commande {
-  int? id;
-  // int? userID;
-  String? nom;
-  String? prenom;
-  String? region;
-  String? adresse;
-  // String? puissance;
-  // String? etat;
+  String? produit;
+  String? reference;
+  int? quantite;
 
-  Commande(this.id, this.nom, this.prenom, this.region, this.adresse);
+  Commande(this.produit, this.reference, this.quantite);
 }

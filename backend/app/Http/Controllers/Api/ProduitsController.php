@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Produit;
@@ -71,5 +72,14 @@ class ProduitsController extends Controller
         }catch(Exception $e){
            echo "An error occured ".$e->getMessage();
         }
+    }
+    function getProductWithQuantity()
+    {
+        $result = DB::table('produits as p')
+                    ->join('commandes_details as cd', 'p.id', '=', 'cd.produit')
+                    ->select('p.type', 'p.name', 'cd.qte')
+                    ->get();
+
+        return response()->json($result);
     }
 }
