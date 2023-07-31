@@ -15,7 +15,7 @@ class _CommandesListState extends State<CommandesList> {
   Future<void> fetchOrders() async {
     try {
       final response =
-          await http.get(Uri.parse('http://192.168.1.4/api/mescommandes'));
+          await http.get(Uri.parse('http://192.168.1.240/api/mescommandes'));
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         setState(() {
@@ -44,29 +44,35 @@ class _CommandesListState extends State<CommandesList> {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      backgroundColor: Color.fromARGB(255, 242, 233, 233),
+      backgroundColor: Colors.grey[200],
       body: SingleChildScrollView(
         child: Container(
-          padding: const EdgeInsets.only(left: 40, right: 40),
+          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               ElevatedButton(
-                child: Text(
-                  "Commander",
-                  style: TextStyle(fontSize: 22),
-                ),
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => Order()),
                   );
                 },
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(vertical: 15),
+                  primary: Colors.blue,
+                ),
+                child: Text(
+                  "Commander",
+                  style: TextStyle(fontSize: 22, color: Colors.white),
+                ),
               ),
+              SizedBox(height: 20),
               DataTable(
                 columns: [
                   DataColumn(label: Text('Produit')),
-                  DataColumn(label: Text('Réference')),
-                  DataColumn(label: Text('Quantite')),
+                  DataColumn(label: Text('Référence')),
+                  DataColumn(label: Text('Quantité')),
                 ],
                 rows: items.map((item) {
                   return DataRow(
