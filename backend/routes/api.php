@@ -6,6 +6,9 @@ Use App\Http\Controllers\Api\CommandesController;
 Use App\Http\Controllers\Api\ProduitsController;
 Use App\Http\Controllers\Api\CommandesDetailsController;
 Use App\Http\Controllers\Api\AuthController;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 
 /*
@@ -20,6 +23,14 @@ Use App\Http\Controllers\Api\AuthController;
 */
 Route::post('/signup', [AuthController::class, 'sign_up']);//Sign up route
 Route::post('/login', [AuthController::class, 'login']);// login route
+
+
+
+
+
+
+Route::group(['middleware' => ['auth:sanctum']], function () {
+Route::post('/logout', [AuthController::class, 'logout']);// Logout route
 
 
 //Commandes Routes
@@ -47,10 +58,12 @@ Route::post('/c_details/create' , [CommandesDetailsController::class,'create']);
 Route::put('/c_details/update/{detail}' , [CommandesDetailsController::class,'update']); //Update Detail
 Route::delete('/c_details/delete/{detail}' , [CommandesDetailsController::class,'delete']); //delete Detail
 //-----------------------------------------------------------------------------------//
+Route::get('/user', function (Request $request) {
+    return $request->user();
+});
+
+
+});
 
 
 
-
-Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::post('/logout', [AuthController::class, 'logout']);// Logout route
-    });

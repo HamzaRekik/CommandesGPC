@@ -1,13 +1,18 @@
+import 'package:application/home_page.dart';
 import 'package:application/login.dart';
+import 'package:application/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:application/produit.dart';
 import 'package:application/commandes_list.dart';
 import 'package:application/form.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(GPC());
+  runApp(MultiProvider(
+      providers: [ChangeNotifierProvider(create: (context) => Auth())],
+      child: GPC()));
 }
 
 class GPC extends StatelessWidget {
@@ -15,7 +20,7 @@ class GPC extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: CommandesList(),
+      home: LoginScreen(),
     );
   }
 }

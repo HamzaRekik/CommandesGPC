@@ -28,11 +28,11 @@ class AuthController extends Controller
             'last_name' => $request->last_name,
         ]);
     
-        $token = $user->createToken('apiToken')->plainTextToken;
+        
     
         $res = [
-            'user' => $user,
-            'token' => $token
+            'user' => $user
+            
         ];
     
         return response($res, 201);
@@ -50,7 +50,7 @@ class AuthController extends Controller
         if (!$user || !Hash::check($data['password'], $user->password)) {
             return response([
                 'msg' => 'incorrect username or password'
-            ], 401);
+            ]);
         }
 
         $token = $user->createToken('apiToken')->plainTextToken;

@@ -1,4 +1,7 @@
+import 'package:application/home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:application/services/auth.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -68,9 +71,20 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 24.0),
                 ElevatedButton(
                   onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      print(_emailController.text);
-                      print(_passwordController.text);
+                    Map creds = {
+                      'email': _emailController.text,
+                      'password': _passwordController.text,
+                    };
+                    // Perform login
+                    Auth auth = Provider.of<Auth>(context, listen: false);
+                    auth.login(creds: creds);
+
+                    // Check if login was successful and redirect
+                    if (auth.authenticated == true) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => HomeScreen()),
+                      );
                     }
                   },
                   style: ElevatedButton.styleFrom(
