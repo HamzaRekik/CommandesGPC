@@ -16,7 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ]),
         body: Container(
-          child: Text("hamza"),
+          child: Text("home page"),
         ));
   }
 }

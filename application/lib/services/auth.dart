@@ -1,26 +1,26 @@
 import 'package:application/user.dart';
-import 'package:dio/dio.dart' as yolo;
+import 'package:dio/dio.dart' as diohttp;
 import 'package:flutter/material.dart';
 import 'package:application/services/dio.dart';
 
 class Auth extends ChangeNotifier {
   User? _user;
-  String? _token;
   bool _isLoggedIn = false;
   bool get authenticated => _isLoggedIn;
   User? get user => _user;
   void login({Map? creds}) async {
     print(creds);
     try {
-      yolo.Response response = await dio()!.post("/login", data: creds);
-      if (response.statusCode == 200) {
+      diohttp.Response response = await dio()!.post("/login", data: creds);
+      if (response.statusCode == 201) {
         _isLoggedIn = true;
         print(_isLoggedIn);
+        print(response.data['token'].toString());
+        // String token = response.data['token'].toString();
+        // tryToken(token: token);
+      } else {
+        print("wrong email or password");
       }
-
-      print(response.data['token'].toString());
-      String token = response.data.toString();
-      tryToken(token: token);
 
       notifyListeners();
     } catch (e) {
@@ -33,8 +33,9 @@ class Auth extends ChangeNotifier {
       return;
     } else {
       try {
-        yolo.Response response = await dio()!.post("/user",
-            options: yolo.Options(headers: {'Authorization': 'Bearer $token'}));
+        diohttp.Response response = await dio()!.post("/user",
+            options:
+                diohttp.Options(headers: {'Authorization': 'Bearer $token'}));
         _isLoggedIn = true;
         _user = User.fromJson(response.data);
         notifyListeners();

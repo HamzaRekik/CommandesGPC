@@ -11,6 +11,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -29,31 +30,33 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 40.0),
+        body: SingleChildScrollView(
+      child: Container(
+          color: Color.fromRGBO(229, 229, 235, 255),
+          padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 125),
           child: Form(
             key: _formKey,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text(
-                  'Bienvenue !',
-                  style: TextStyle(
-                    fontSize: 28.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
+                Image.asset("images/3.png"),
                 const SizedBox(height: 20.0),
                 TextFormField(
                   validator: (value) =>
                       value!.isEmpty ? 'please enter an valid email' : null,
                   controller: _emailController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Email',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.email),
+                    labelStyle: TextStyle(color: Colors.black),
+                    border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black)),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black)),
+                    prefixIcon: Icon(
+                      Icons.email,
+                      color: Colors.blueAccent,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16.0),
@@ -61,12 +64,19 @@ class _LoginScreenState extends State<LoginScreen> {
                   validator: (value) =>
                       value!.isEmpty ? 'please enter password' : null,
                   controller: _passwordController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Mot de passe',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.lock),
+                    labelStyle: TextStyle(color: Colors.black),
+                    border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black)),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black)),
+                    prefixIcon: Icon(
+                      Icons.lock,
+                      color: Colors.blueAccent,
+                    ),
                   ),
-                  obscureText: true,
+                  obscureText: false,
                 ),
                 const SizedBox(height: 24.0),
                 ElevatedButton(
@@ -88,24 +98,22 @@ class _LoginScreenState extends State<LoginScreen> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.blue,
+                    backgroundColor: Colors.blueAccent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                   ),
-                  child: const Padding(
+                  child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 12.0),
                     child: Text(
                       'Se connecter',
-                      style: TextStyle(
-                        fontSize: 16.0,
-                      ),
+                      style: TextStyle(fontSize: 16.0),
                     ),
                   ),
                 ),
               ],
             ),
           )),
-    );
+    ));
   }
 }
