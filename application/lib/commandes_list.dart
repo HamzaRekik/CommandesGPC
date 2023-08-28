@@ -15,12 +15,13 @@ class _CommandesListState extends State<CommandesList> {
   Future<void> fetchOrders() async {
     try {
       final response =
-          await http.get(Uri.parse('http://192.168.1.240/api/mescommandes'));
+          await http.get(Uri.parse('http://192.168.100.188/api/mescommandes'));
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         setState(() {
           items = data
-              .map((item) => Commande(item['type'], item['name'], item['qte']))
+              .map((item) => Commande(item['type'], item['name'], item['qte'],
+                  item['nom'], item['prenom'], item['region'], item['adresse']))
               .toList();
         });
       } else {
@@ -40,52 +41,60 @@ class _CommandesListState extends State<CommandesList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
       backgroundColor: Colors.grey[200],
-      body: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Order()),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 15),
-                  primary: Colors.blue,
+      appBar: AppBar(
+        title: Text('Liste des commandes'),
+        backgroundColor: Colors.blueAccent, // Customize the app bar color
+      ),
+      body: Padding(
+        padding: const EdgeInsets.only(
+            left: 20, right: 20, top: 5), // Add padding around the body
+        child: ListView.builder(
+          itemCount: items.length,
+          itemBuilder: (context, index) {
+            return Card(
+              elevation: 4, // Add some elevation to the card
+              margin: const EdgeInsets.symmetric(vertical: 10),
+              child: ListTile(
+                contentPadding: const EdgeInsets.all(15), // Add content padding
+                title: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${items[index].nom} ${items[index].prenom}',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 5),
+                    Text(
+                      '${items[index].region}, ${items[index].adresse}',
+                      style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                    ),
+                  ],
                 ),
-                child: Text(
-                  "Commander",
-                  style: TextStyle(fontSize: 22, color: Colors.white),
+                subtitle: Text(
+                  'Référence: ${items[index].reference}',
+                  style: TextStyle(fontSize: 14),
                 ),
+                trailing: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      'Quantité',
+                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                    ),
+                    Text(
+                      items[index].quantite.toString(),
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                isThreeLine: true,
               ),
-              SizedBox(height: 20),
-              DataTable(
-                columns: [
-                  DataColumn(label: Text('Produit')),
-                  DataColumn(label: Text('Référence')),
-                  DataColumn(label: Text('Quantité')),
-                ],
-                rows: items.map((item) {
-                  return DataRow(
-                    cells: [
-                      DataCell(Text(item.produit.toString())),
-                      DataCell(Text(item.reference.toString())),
-                      DataCell(Text(item.quantite.toString())),
-                    ],
-                  );
-                }).toList(),
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );

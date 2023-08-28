@@ -89,7 +89,7 @@ class _OrderState extends State<Order> {
         'produit': produitID,
         'qte': qte,
       };
-      final uri = Uri.parse("http://192.168.1.240/api/c_details/create");
+      final uri = Uri.parse("http://192.168.100.188/api/c_details/create");
       final response = await http.post(uri, body: request);
       if (response.statusCode == 200) {
         print('Details Commande created successfully!');
@@ -114,7 +114,7 @@ class _OrderState extends State<Order> {
         'puissance': '55',
         'etat': 'Réservée'
       };
-      final uri = Uri.parse("http://192.168.1.240/api/commandes/create");
+      final uri = Uri.parse("http://192.168.100.188/api/commandes/create");
       final response = await http.post(uri, body: request);
 
       if (response.statusCode == 200) {
@@ -135,7 +135,7 @@ class _OrderState extends State<Order> {
   Future<void> fetchProduct(String type) async {
     try {
       final response = await http
-          .get(Uri.parse('http://192.168.1.4/api/produits/type/$type'));
+          .get(Uri.parse('http://192.168.100.188/api/produits/type/$type'));
       if (response.statusCode == 200) {
         final List<dynamic> products = json.decode(response.body);
         List<Produit> items = products.map((item) {
@@ -158,61 +158,55 @@ class _OrderState extends State<Order> {
     final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
     return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      backgroundColor: const Color.fromARGB(255, 242, 233, 233),
-      body: Stepper(
-        type: StepperType.horizontal,
-        steps: getSteps(),
-        currentStep: currentStep,
-        onStepTapped: (step) => setState(() => currentStep = step),
-        onStepContinue: () {
-          final isLastStep = currentStep == getSteps().length - 1;
-          if (isLastStep) {
-            print("Complete");
-          } else {
-            setState(() => currentStep += 1);
-          }
-        },
-        onStepCancel: () {
-          currentStep == 0 ? null : setState(() => currentStep -= 1);
-        },
-      ),
-    );
-  }
-
-  List<Step> getSteps() => [
-        Step(
-            state: currentStep > 0 ? StepState.complete : StepState.indexed,
-            isActive: currentStep >= 0,
-            title: const Text('Adresse'),
-            content: Column(
+        key: _scaffoldKey,
+        body: SingleChildScrollView(
+          child: Container(
+            margin: EdgeInsets.only(top: 80),
+            color: const Color.fromRGBO(229, 229, 235, 255),
+            padding: EdgeInsets.symmetric(horizontal: 40),
+            child: Column(
               children: [
                 TextFormField(
-                  decoration: const InputDecoration(labelText: "Nom"),
-                  onChanged: (value) {
+                  decoration: const InputDecoration(
+                    labelText: "Nom",
+                    labelStyle: TextStyle(color: Colors.black),
+                    border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black)),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black)),
+                  ),
+                  onChanged: (values) {
                     setState(() {
-                      nameValue = value;
+                      nameValue = values;
                     });
                   },
                 ),
+                const SizedBox(height: 10.0),
                 TextFormField(
-                    decoration: const InputDecoration(labelText: "Prénom"),
+                    decoration: const InputDecoration(
+                      labelText: "Prénom",
+                      labelStyle: TextStyle(color: Colors.black),
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black)),
+                      focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black)),
+                    ),
                     onChanged: (value) {
                       setState(() {
                         lastNameValue = value;
                       });
                     }),
+                const SizedBox(height: 10.0),
                 DropdownButtonFormField<String>(
-                  decoration: const InputDecoration(labelText: "Gouvernorat"),
-                  icon: const Icon(Icons.keyboard_arrow_down),
-                  hint: const Text(
-                    "Sélectionnez votre gouvernorat",
-                    style: TextStyle(fontSize: 22),
+                  decoration: const InputDecoration(
+                    labelText: "Gouvernorat",
+                    labelStyle: TextStyle(color: Colors.black),
+                    border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black)),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black)),
                   ),
+                  icon: const Icon(Icons.keyboard_arrow_down),
                   value: selectedItemG,
                   onChanged: (item) => setState(() {
                     selectedItemG = item;
@@ -228,130 +222,117 @@ class _OrderState extends State<Order> {
                     );
                   }).toList(),
                 ),
+                const SizedBox(height: 10.0),
                 TextFormField(
                     enabled: isVisible,
-                    decoration: const InputDecoration(labelText: "Adresse"),
+                    decoration: const InputDecoration(
+                      labelText: "Adresse",
+                      labelStyle: TextStyle(color: Colors.black),
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black)),
+                      focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black)),
+                    ),
                     onChanged: (value) {
                       setState(() {
                         addresValue = value;
                       });
                     }),
-              ],
-            )),
-        Step(
-            state: currentStep > 1 ? StepState.complete : StepState.indexed,
-            isActive: currentStep >= 1,
-            title: const Text('Produits'),
-            content: Column(
-              children: [
-                SizedBox(
-                  height: 400, // Set an appropriate height for the ListView
-                  child: ListView.builder(
-                    itemCount: formDataList.length + 1,
-                    itemBuilder: (context, index) {
-                      if (index == formDataList.length) {
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            ElevatedButton(
-                                child: const Text(
-                                  "Commander",
-                                  style: TextStyle(fontSize: 22),
-                                ),
-                                onPressed: () {
-                                  createCommande(
-                                      nameValue.toString(),
-                                      lastNameValue.toString(),
-                                      selectedItemG.toString(),
-                                      addresValue.toString());
-                                }),
-                            ElevatedButton(
-                              child: const Text(
-                                "+",
-                                style: TextStyle(fontSize: 22),
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  formDataList.add(FormData());
-                                });
-                              },
-                            )
-                          ],
-                        );
-                      } else {
-                        FormData formData = formDataList[index];
-                        return buildForm(formData);
-                      }
-                    },
+                const SizedBox(height: 16.0),
+                DropdownButtonFormField<String>(
+                  decoration: const InputDecoration(
+                    labelText: "Produit",
+                    labelStyle: TextStyle(color: Colors.black),
+                    border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black)),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black)),
+                  ),
+                  icon: const Icon(Icons.keyboard_arrow_down),
+                  value: selectedProduct,
+                  onChanged: (item) => setState(() {
+                    selectedProduct = item;
+                    fetchProduct(selectedProduct.toString());
+                  }),
+                  items: produits.map((String produit) {
+                    return DropdownMenuItem<String>(
+                      value: produit,
+                      child: Text(
+                        produit,
+                        style: const TextStyle(fontSize: 22),
+                      ),
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 10.0),
+                DropdownButtonFormField<String>(
+                  decoration: const InputDecoration(
+                    labelText: "Référence",
+                    labelStyle: TextStyle(color: Colors.black),
+                    border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black)),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black)),
+                  ),
+                  icon: const Icon(Icons.keyboard_arrow_down),
+                  value: selectedItem,
+                  onChanged: (item) {
+                    setState(() {
+                      selectedItem = item;
+                    });
+                  },
+                  items:
+                      _items.map<DropdownMenuItem<String>>((Produit produit) {
+                    return DropdownMenuItem<String>(
+                      value: produit.id.toString(),
+                      child: Text(
+                        produit.name,
+                        style: const TextStyle(fontSize: 22),
+                      ),
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 10.0),
+                TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: "Quantité",
+                      labelStyle: TextStyle(color: Colors.black),
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black)),
+                      focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black)),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        quantityValue = value;
+                      });
+                    }),
+                const SizedBox(height: 10.0),
+                ElevatedButton(
+                  onPressed: () {
+                    createCommande(
+                        nameValue.toString(),
+                        lastNameValue.toString(),
+                        selectedItemG.toString(),
+                        addresValue.toString());
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12.0),
+                    child: Text(
+                      'Commander',
+                      style: TextStyle(fontSize: 16.0),
+                    ),
                   ),
                 ),
               ],
-            )),
-        Step(
-            state: currentStep > 2 ? StepState.complete : StepState.indexed,
-            isActive: currentStep >= 2,
-            title: const Text('Complete'),
-            content: Container())
-      ];
-
-  Widget buildForm(FormData form) {
-    return Column(
-      children: [
-        DropdownButtonFormField<String>(
-          decoration: const InputDecoration(labelText: "Produit"),
-          icon: const Icon(Icons.keyboard_arrow_down),
-          hint: const Text(
-            'Produit',
-            style: TextStyle(fontSize: 22),
+            ),
           ),
-          value: selectedProduct,
-          onChanged: (item) => setState(() {
-            selectedProduct = item;
-            fetchProduct(selectedProduct.toString());
-          }),
-          items: produits.map((String produit) {
-            return DropdownMenuItem<String>(
-              value: produit,
-              child: Text(
-                produit,
-                style: const TextStyle(fontSize: 22),
-              ),
-            );
-          }).toList(),
-        ),
-        DropdownButtonFormField<String>(
-          hint: const Text(
-            "Veuillez choisir un référence",
-            style: TextStyle(fontSize: 22),
-          ),
-          decoration: const InputDecoration(labelText: "Référence"),
-          icon: const Icon(Icons.keyboard_arrow_down),
-          value: selectedItem,
-          onChanged: (item) {
-            setState(() {
-              selectedItem = item;
-            });
-          },
-          items: _items.map<DropdownMenuItem<String>>((Produit produit) {
-            return DropdownMenuItem<String>(
-              value: produit.id.toString(),
-              child: Text(
-                produit.name,
-                style: const TextStyle(fontSize: 22),
-              ),
-            );
-          }).toList(),
-        ),
-        TextFormField(
-            decoration: const InputDecoration(labelText: "Quantité"),
-            onChanged: (value) {
-              setState(() {
-                quantityValue = value;
-              });
-            }),
-
-        const Divider(), // To separate each form visually (optional)
-      ],
-    );
+        ));
   }
 }

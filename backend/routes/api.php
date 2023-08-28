@@ -29,7 +29,7 @@ Route::post('/login', [AuthController::class, 'login']);// login route
 
 
 
-Route::group(['middleware' => ['auth:sanctum']], function () {
+// Route::group(['middleware' => ['auth:sanctum']], function () {
 Route::post('/logout', [AuthController::class, 'logout']);// Logout route
 
 
@@ -63,7 +63,7 @@ Route::get('/user', function (Request $request) {
 });
 
 
-});
+// });
 
 
 

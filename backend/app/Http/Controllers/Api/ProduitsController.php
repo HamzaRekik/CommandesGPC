@@ -76,9 +76,10 @@ class ProduitsController extends Controller
     function getProductWithQuantity()
     {
         $result = DB::table('produits as p')
-                    ->join('commandes_details as cd', 'p.id', '=', 'cd.produit')
-                    ->select('p.type', 'p.name', 'cd.qte')
-                    ->get();
+            ->join('commandes_details as cd', 'p.id', '=', 'cd.produit')
+            ->join('commandes as c', 'cd.id_demande', '=', 'c.id')
+            ->select('c.nom', 'c.prenom', 'c.region', 'c.adresse', 'p.type', 'p.name', 'cd.qte')
+            ->get();
 
         return response()->json($result);
     }
