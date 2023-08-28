@@ -43,9 +43,10 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         body: SingleChildScrollView(
           child: Container(
+            margin: EdgeInsets.only(top: 125),
               color: const Color.fromRGBO(229, 229, 235, 255),
               padding:
-                  const EdgeInsets.symmetric(horizontal: 40.0, vertical: 50),
+                  const EdgeInsets.symmetric(horizontal: 40.0),
               child: Form(
                 key: _formKey,
                 child: Column(
