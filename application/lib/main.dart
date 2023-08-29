@@ -15,12 +15,45 @@ void main() {
       child: GPC()));
 }
 
+class SplashScreen extends StatefulWidget {
+  @override
+  _SplashScreenState createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _navigateToMainScreen(); // Démarre la temporisation et la transition
+  }
+
+  Future<void> _navigateToMainScreen() async {
+    await Future.delayed(Duration(seconds: 6)); // Temporisation de 3 secondes
+
+    // Navigue vers l'écran principal ou la page suivante
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => LoginScreen()),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white, // Couleur de fond de l'écran de démarrage
+      body: Center(
+        child: Image.asset('images/gpc.png')
+      ),
+    );
+  }
+}
+
+
 class GPC extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: CommandesList(),
+      home: SplashScreen(),
     );
   }
 }

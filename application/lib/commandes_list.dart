@@ -15,7 +15,7 @@ class _CommandesListState extends State<CommandesList> {
   Future<void> fetchOrders() async {
     try {
       final response =
-          await http.get(Uri.parse('http://192.168.1.8/api/mescommandes'));
+          await http.get(Uri.parse('http://192.168.100.188/api/mescommandes'));
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         setState(() {
@@ -41,67 +41,89 @@ class _CommandesListState extends State<CommandesList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(onPressed: (){},
-        backgroundColor: Colors.blueAccent,
-        child: Icon(Icons.logout),
-      ),
-      backgroundColor: Colors.grey[200],
-      body: Column(children: [
-        SizedBox(height: 50,),
-      Text("Liste des commandes ", style: TextStyle(fontSize: 25)) ,
-        SizedBox(height: 20,),
-        Container(
-        height: 700,
-        padding: const EdgeInsets.only(
-            left: 20, right: 20), // Add padding around the body
-        child: ListView.builder(
-          itemCount: items.length,
-          itemBuilder: (context, index) {
-            return Card(
-              elevation: 4, // Add some elevation to the card
-              margin: const EdgeInsets.symmetric(vertical: 2),
-              child: ListTile(
-                contentPadding: const EdgeInsets.all(15), // Add content padding
-                title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${items[index].nom} ${items[index].prenom}',
-                      style:
-                      TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: 5),
-                    Text(
-                      '${items[index].region}, ${items[index].adresse}',
-                      style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-                    ),
-                  ],
-                ),
-                subtitle: Text(
-                  'Référence: ${items[index].reference}',
-                  style: TextStyle(fontSize: 14),
-                ),
-                trailing: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      'Quantité',
-                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                    ),
-                    Text(
-                      items[index].quantite.toString(),
-                      style:
-                      TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-                isThreeLine: true,
-              ),
-            );
-          },
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {},
+          backgroundColor: Colors.blueAccent,
+          child: Icon(Icons.logout),
         ),
-      ),],)
-    );
+        backgroundColor: Colors.grey[200],
+        body: Column(
+          children: [
+            SizedBox(
+              height: 50,
+            ),
+            Text("Liste des commandes ", style: TextStyle(fontSize: 25)),
+            SizedBox(
+              height: 20,
+            ),
+            Container(
+              height: 700,
+              padding: const EdgeInsets.only(
+                  left: 20, right: 20), // Add padding around the body
+              child: ListView.builder(
+                itemCount: items.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    elevation: 4, // Add some elevation to the card
+                    margin: const EdgeInsets.symmetric(vertical: 2),
+                    child: ListTile(
+                      onLongPress: () {
+                        showDialog(
+
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              actions : [ElevatedButton(onPressed: (){}, child: Text("Supprimer")),ElevatedButton(onPressed: (){}, child: Text("Annuler"))],
+                              title: Text("Voulez vous supprimer cet Commande ?"),
+                            );
+                          },
+                        );
+                      },
+                      contentPadding:
+                          const EdgeInsets.all(15), // Add content padding
+                      title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${items[index].nom} ${items[index].prenom}',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 5),
+                          Text(
+                            '${items[index].region}, ${items[index].adresse}',
+                            style: TextStyle(
+                                fontSize: 16, color: Colors.grey[600]),
+                          ),
+                        ],
+                      ),
+                      subtitle: Text(
+                        'Référence: ${items[index].reference}',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      trailing: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            'Quantité',
+                            style: TextStyle(
+                                fontSize: 14, color: Colors.grey[600]),
+                          ),
+                          Text(
+                            items[index].quantite.toString(),
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      isThreeLine: true,
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ));
   }
 }
