@@ -40,13 +40,10 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white, // Couleur de fond de l'écran de démarrage
-      body: Center(
-        child: Image.asset('images/gpc.png')
-      ),
+      body: Center(child: Image.asset('images/gpc.png')),
     );
   }
 }
-
 
 class GPC extends StatelessWidget {
   @override
@@ -65,6 +62,14 @@ class Order extends StatefulWidget {
 
 class _OrderState extends State<Order> {
   final formKey = GlobalKey<FormState>();
+  String? selectedItem; // variable take id of selected product reference
+  String? selectedProduct; // variable take id of selected product type
+  String? selectedItemG; //variable take id of selected Governorat
+  bool? isVisible = false; // controls address text input visibility
+  String? nameValue; // value of firstname textfield
+  String? lastNameValue; // value of lastname textfield
+  String? addresValue; // value of address textfield
+  String? quantityValue; // value of quantity textfield
   List<Produit> _items =
       []; //list of filtred products returned by fetchProduct()
 
@@ -99,19 +104,28 @@ class _OrderState extends State<Order> {
     'Onduleur',
     'Variateur'
   ]; // list of product types
-  String? selectedItem; // variable take id of selected product reference
-  String? selectedProduct; // variable take id of selected product type
-  String? selectedItemG; //variable take id of selected Governorat
-  bool? isVisible = false; // controls address text input visibility
-  String? nameValue; // value of firstname textfield
-  String? lastNameValue; // value of lastname textfield
-  String? addresValue; // value of address textfield
-  String? quantityValue; // value of quantity textfield
-  List<FormData> formDataList = [];
-  int currentStep = 0;
+
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    lastNameController.dispose();
+    addController.dispose();
+    quanController.dispose();
+    super.dispose();
+  }
+
+  void clear() {
+    setState(() {
+      nameController.clear();
+      lastNameController.clear();
+      addController.clear();
+      quanController.clear();
+    });
   }
 
   Future<void> commandeDetail(
@@ -122,7 +136,7 @@ class _OrderState extends State<Order> {
         'produit': produitID,
         'qte': qte,
       };
-      final uri = Uri.parse("http://192.168.100.188/api/c_details/create");
+      final uri = Uri.parse("http://192.168.1.8/api/c_details/create");
       final response = await http.post(uri, body: request);
       if (response.statusCode == 200) {
         print('Details Commande created successfully!');
@@ -147,7 +161,7 @@ class _OrderState extends State<Order> {
         'puissance': '55',
         'etat': 'Réservée'
       };
-      final uri = Uri.parse("http://192.168.100.188/api/commandes/create");
+      final uri = Uri.parse("http://192.168.1.8/api/commandes/create");
       final response = await http.post(uri, body: request);
 
       if (response.statusCode == 200) {
@@ -168,7 +182,7 @@ class _OrderState extends State<Order> {
   Future<void> fetchProduct(String type) async {
     try {
       final response = await http
-          .get(Uri.parse('http://192.168.100.188/api/produits/type/$type'));
+          .get(Uri.parse('http://192.168.1.8/api/produits/type/$type'));
       if (response.statusCode == 200) {
         final List<dynamic> products = json.decode(response.body);
         List<Produit> items = products.map((item) {
@@ -186,45 +200,58 @@ class _OrderState extends State<Order> {
     }
   }
 
+  TextEditingController nameController = TextEditingController();
+  TextEditingController lastNameController = TextEditingController();
+  TextEditingController addController = TextEditingController();
+  TextEditingController quanController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
-    final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
     return Scaffold(
-        key: _scaffoldKey,
-        floatingActionButton: FloatingActionButton(backgroundColor: Colors.blueAccent,
-          onPressed: (){ Navigator.push(
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.blueAccent,
+          onPressed: () {
+            Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => LoginScreen()),
-            );},
-        child: Icon(Icons.arrow_back),),floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+            );
+          },
+          child: const Icon(Icons.arrow_back),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
         body: SingleChildScrollView(
           child: Container(
-            margin: EdgeInsets.only(top: 80),
+            margin: const EdgeInsets.only(top: 80),
             color: const Color.fromRGBO(229, 229, 235, 255),
-            padding: EdgeInsets.symmetric(horizontal: 40),
+            padding: const EdgeInsets.symmetric(horizontal: 40),
             child: Column(
               children: [
-                Container(alignment: Alignment.bottomLeft,
-                  child:Text("Bienvenue ! ", style: TextStyle(fontSize: 35)) ,),
-                SizedBox(height: 30,),
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: "Nom",
-                    labelStyle: TextStyle(color: Colors.black),
-                    border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black)),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black)),
-                  ),
-                  onChanged: (values) {
-                    setState(() {
-                      nameValue = values;
-                    });
-                  },
+                Container(
+                  alignment: Alignment.bottomLeft,
+                  child: const Text("Bienvenue ! ",
+                      style: TextStyle(fontSize: 35)),
                 ),
+                const SizedBox(
+                  height: 30,
+                ),
+                TextFormField(
+                    controller: nameController,
+                    decoration: const InputDecoration(
+                      labelText: "Nom",
+                      labelStyle: TextStyle(color: Colors.black),
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black)),
+                      focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black)),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        nameValue = value;
+                      });
+                    }),
                 const SizedBox(height: 10.0),
                 TextFormField(
+                    controller: lastNameController,
                     decoration: const InputDecoration(
                       labelText: "Prénom",
                       labelStyle: TextStyle(color: Colors.black),
@@ -266,6 +293,7 @@ class _OrderState extends State<Order> {
                 ),
                 const SizedBox(height: 10.0),
                 TextFormField(
+                    controller: addController,
                     enabled: isVisible,
                     decoration: const InputDecoration(
                       labelText: "Adresse",
@@ -336,6 +364,7 @@ class _OrderState extends State<Order> {
                 ),
                 const SizedBox(height: 10.0),
                 TextFormField(
+                    controller: quanController,
                     decoration: const InputDecoration(
                       labelText: "Quantité",
                       labelStyle: TextStyle(color: Colors.black),
@@ -357,6 +386,24 @@ class _OrderState extends State<Order> {
                         lastNameValue.toString(),
                         selectedItemG.toString(),
                         addresValue.toString());
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            actions: [
+                              ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    clear();
+                                  },
+                                  child: Text("Okay"))
+                            ],
+                            title: Text(
+                                "Cher ${nameValue.toString()} ${lastNameValue.toString()}"),
+                            content: Text(
+                                "Votre commande a été passée avec succès!"),
+                          );
+                        });
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blueAccent,
