@@ -1,4 +1,5 @@
 class Commande {
+  int? id;
   String? produit;
   String? reference;
   String? nom;
@@ -7,6 +8,6 @@ class Commande {
   String? adresse;
   int? quantite;
 
-  Commande(this.produit, this.reference, this.quantite, this.nom, this.prenom,
-      this.region, this.adresse);
+  Commande(this.id, this.produit, this.reference, this.quantite, this.nom,
+      this.prenom, this.region, this.adresse);
 }

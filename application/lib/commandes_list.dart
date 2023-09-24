@@ -15,16 +15,40 @@ class _CommandesListState extends State<CommandesList> {
   Future<void> fetchOrders() async {
     try {
       final response =
-          await http.get(Uri.parse('http://192.168.100.188/api/mescommandes'));
+          await http.get(Uri.parse('http://192.168.1.8/api/mescommandes'));
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         setState(() {
           items = data
-              .map((item) => Commande(item['type'], item['name'], item['qte'],
-                  item['nom'], item['prenom'], item['region'], item['adresse']))
+              .map((item) => Commande(
+                  item['id'],
+                  item['type'],
+                  item['name'],
+                  item['qte'],
+                  item['nom'],
+                  item['prenom'],
+                  item['region'],
+                  item['adresse']))
               .toList();
         });
       } else {
+        print('API request failed with status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error during API request: $e');
+    }
+  }
+
+  Future<void> deleteCommande(String id) async {
+    try {
+      final response = await http
+          .delete(Uri.parse('http://192.168.1.8/api/commandes/delete/$id'));
+      if (response.statusCode == 200) {
+        // The resource was successfully deleted.
+        // You can perform any additional actions here, such as updating UI.
+        print('Resource with id $id deleted successfully.');
+      } else {
+        // The resource with the specified id was not found.
         print('API request failed with status code: ${response.statusCode}');
       }
     } catch (e) {
@@ -69,12 +93,26 @@ class _CommandesListState extends State<CommandesList> {
                     child: ListTile(
                       onLongPress: () {
                         showDialog(
-
                           context: context,
                           builder: (context) {
                             return AlertDialog(
-                              actions : [ElevatedButton(onPressed: (){}, child: Text("Supprimer")),ElevatedButton(onPressed: (){}, child: Text("Annuler"))],
-                              title: Text("Voulez vous supprimer cet Commande ?"),
+                              actions: [
+                                ElevatedButton(
+                                    onPressed: () {
+                                      deleteCommande(
+                                          items[index].id.toString());
+                                      fetchOrders();
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text("Supprimer")),
+                                ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text("Annuler"))
+                              ],
+                              title:
+                                  Text("Voulez vous supprimer cet Commande ?"),
                             );
                           },
                         );
@@ -85,7 +123,7 @@ class _CommandesListState extends State<CommandesList> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '${items[index].nom} ${items[index].prenom}',
+                            '${index + 1} ${items[index].nom} ${items[index].prenom}',
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold),
                           ),
