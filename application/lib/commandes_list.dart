@@ -1,6 +1,5 @@
 import 'package:application/commande.dart';
 import 'package:application/login.dart';
-import 'package:application/main.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -68,6 +67,7 @@ class _CommandesListState extends State<CommandesList> {
     return Scaffold(
         floatingActionButton: FloatingActionButton(
           onPressed: () {
+            Navigator.pop(context);
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               return LoginScreen();
             }));

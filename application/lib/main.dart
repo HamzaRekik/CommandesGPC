@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:application/produit.dart';
-import 'package:application/commandes_list.dart';
-import 'package:application/form.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -27,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _navigateToMainScreen() async {
-    await Future.delayed(Duration(seconds: 6)); // Temporisation de 3 secondes
+    await Future.delayed(Duration(seconds: 10)); // Temporisation de 3 secondes
 
     // Navigue vers l'écran principal ou la page suivante
     Navigator.of(context).pushReplacement(
