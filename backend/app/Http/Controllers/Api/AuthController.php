@@ -60,7 +60,7 @@ class AuthController extends Controller
             'token' => $token
         ];
 
-        return response($res, 201);
+        return response($res, 200);
     }
 
     public function logout(Request $request)

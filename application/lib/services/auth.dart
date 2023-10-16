@@ -12,7 +12,7 @@ class Auth extends ChangeNotifier {
     print(creds);
     try {
       diohttp.Response response = await dio()!.post("/login", data: creds);
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200) {
         _isLoggedIn = true;
         print(_isLoggedIn);
         print(response.data['token'].toString());
@@ -28,23 +28,23 @@ class Auth extends ChangeNotifier {
     }
   }
 
-  void tryToken({String? token}) async {
-    if (token == null) {
-      return;
-    } else {
-      try {
-        diohttp.Response response = await dio()!.post("/user",
-            options:
-                diohttp.Options(headers: {'Authorization': 'Bearer $token'}));
-        _isLoggedIn = true;
-        _user = User.fromJson(response.data);
-        notifyListeners();
-        print(_user);
-      } catch (e) {
-        print(e);
-      }
-    }
-  }
+  // void tryToken({String? token}) async {
+  //   if (token == null) {
+  //     return;
+  //   } else {
+  //     try {
+  //       diohttp.Response response = await dio()!.post("/user",
+  //           options:
+  //               diohttp.Options(headers: {'Authorization': 'Bearer $token'}));
+  //       _isLoggedIn = true;
+  //       _user = User.fromJson(response.data);
+  //       notifyListeners();
+  //       print(_user);
+  //     } catch (e) {
+  //       print(e);
+  //     }
+  //   }
+  // }
 
   void logout() {
     _isLoggedIn = false;
