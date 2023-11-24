@@ -1,8 +1,9 @@
-import 'package:application/login.dart';
+import 'package:application/static/governorats.dart';
+import 'package:application/views/login.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:application/produit.dart';
+import 'package:application/models/produit.dart';
 
 void main() {
   runApp(GPC());
@@ -64,37 +65,7 @@ class _OrderState extends State<Order> {
   List<Produit> _items =
       []; //list of filtred products returned by fetchProduct()
 
-  List<String> gouvernorats = [
-    'Ariana',
-    "Béja",
-    "Ben Arous",
-    "Bizerte",
-    "Gabès",
-    "Gafsa",
-    "Jendouba",
-    "Kairouan",
-    "Kasserine",
-    "Kébili",
-    "Le Kef",
-    "Mahdia",
-    "Manouba",
-    "Medenine",
-    "Monastir",
-    "Nabeul",
-    "Sfax",
-    "Sidi Bouzid",
-    "Siliana",
-    "Sousse",
-    "Tataouine",
-    "Tozeur",
-    "Tunis",
-    "Zaghouan"
-  ]; //list of gouvernorats
-  List<String> produits = [
-    'Panneau',
-    'Onduleur',
-    'Variateur'
-  ]; // list of product types
+  // list of product types
 
   @override
   void initState() {

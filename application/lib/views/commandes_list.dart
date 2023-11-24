@@ -1,5 +1,5 @@
-import 'package:application/commande.dart';
-import 'package:application/login.dart';
+import 'package:application/models/commande.dart';
+import 'package:application/views/login.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -18,19 +18,7 @@ class _CommandesListState extends State<CommandesList> {
           await http.get(Uri.parse('http://192.168.1.8/api/mescommandes'));
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
-        setState(() {
-          items = data
-              .map((item) => Commande(
-                  item['id'],
-                  item['type'],
-                  item['name'],
-                  item['qte'],
-                  item['nom'],
-                  item['prenom'],
-                  item['region'],
-                  item['adresse']))
-              .toList();
-        });
+        setState(() {});
       } else {
         print('API request failed with status code: ${response.statusCode}');
       }

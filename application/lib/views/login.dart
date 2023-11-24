@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:application/commandes_list.dart';
+import 'package:application/views/commandes_list.dart';
 import 'package:application/main.dart';
 import 'package:flutter/material.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
@@ -17,12 +17,6 @@ class _LoginScreenState extends State<LoginScreen> {
       RoundedLoadingButtonController();
 
   final _formKey = GlobalKey<FormState>();
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
 
   @override
   void dispose() {
