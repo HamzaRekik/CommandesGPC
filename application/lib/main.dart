@@ -1,15 +1,11 @@
 import 'package:application/login.dart';
-import 'package:application/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:application/produit.dart';
-import 'package:provider/provider.dart';
 
 void main() {
-  runApp(MultiProvider(
-      providers: [ChangeNotifierProvider(create: (context) => Auth())],
-      child: GPC()));
+  runApp(GPC());
 }
 
 class SplashScreen extends StatefulWidget {
@@ -21,13 +17,11 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _navigateToMainScreen(); // Démarre la temporisation et la transition
+    _navigateToMainScreen();
   }
 
   Future<void> _navigateToMainScreen() async {
-    await Future.delayed(Duration(seconds: 10)); // Temporisation de 3 secondes
-
-    // Navigue vers l'écran principal ou la page suivante
+    await Future.delayed(Duration(seconds: 10));
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (context) => LoginScreen()),
     );
@@ -36,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Couleur de fond de l'écran de démarrage
+      backgroundColor: Colors.white,
       body: Center(child: Image.asset('images/gpc.png')),
     );
   }

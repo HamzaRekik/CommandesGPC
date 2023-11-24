@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "670194110477",
+    "project_id": "commandesgpc",
+    "storage_bucket": "commandesgpc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:670194110477:android:d601c462336c7ef7310544",
+        "android_client_info": {
+          "package_name": "com.example.application"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAyRblOcE2N6Vq52M5dYXR1ngDLpvJQm9s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
