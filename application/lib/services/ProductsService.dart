@@ -29,8 +29,8 @@ class ProductsService {
     }
   }
 
-  Future<void> makeOrder(
-      String nom, String prenom, String region, String adresse) async {
+  Future<void> makeOrder(String nom, String prenom, String region,
+      String adresse, String qte, String reference) async {
     try {
       Map<String, dynamic> order = {
         'user_id': "1",
@@ -41,7 +41,10 @@ class ProductsService {
         'puissance': '55',
         'etat': 'Réservée'
       };
-      await dio.post("http://192.168.1.8/api/commandes/create", data: order);
+      Response response = await dio
+          .post("http://192.168.1.8/api/commandes/create", data: order);
+      int idCommande = response.data["id"];
+      orderDetails(qte, reference, idCommande.toString());
     } on DioException catch (e) {
       print(e);
     }
