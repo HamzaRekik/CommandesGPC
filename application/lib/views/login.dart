@@ -1,6 +1,5 @@
-import 'dart:async';
+import 'package:application/services/AuthService.dart';
 
-import 'package:application/views/orders_page.dart';
 import 'package:flutter/material.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
@@ -31,7 +30,6 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.pop(context);
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => Order()),
@@ -95,42 +93,15 @@ class _LoginScreenState extends State<LoginScreen> {
                         obscureText: true,
                       ),
                       const SizedBox(height: 24.0),
-                      RoundedLoadingButton(
-                          color: Colors.blueAccent,
-                          failedIcon: Icons.error,
+                      ElevatedButton(
                           child: Text('Se Connecter',
                               style: TextStyle(color: Colors.white)),
-                          controller: _btnController,
-                          resetDuration: Duration(seconds: 4),
-                          resetAfterDuration: true,
-                          onPressed: () async {
+                          onPressed: () {
                             FocusScope.of(context).unfocus();
-                            await Timer(Duration(seconds: 2), () {
-                              if (_emailController.text ==
-                                      "hamzarekik@gmail.com" &&
-                                  _passwordController.text == "hamza") {
-                                Navigator.pop(context);
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => OrdersPage()),
-                                );
-                                _emailController.clear();
-                                _passwordController.clear();
-                              } else {
-                                _btnController.error();
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                        'Email ou Mot de passe sont incorrectes'),
-                                    backgroundColor: Colors.red,
-                                  ),
-                                );
-                                _btnController.reset();
-                                _emailController.clear();
-                                _passwordController.clear();
-                              }
-                            });
+                            AuthenticationService().login(
+                                emailAddress: _emailController.text,
+                                password: _passwordController.text,
+                                context: context);
                           }),
                     ],
                   ),

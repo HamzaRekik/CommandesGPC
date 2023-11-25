@@ -3,13 +3,19 @@ import 'package:application/services/ProductsService.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
-class OrderWidget extends StatelessWidget {
+class OrderWidget extends StatefulWidget {
   OrderWidget({required this.commande});
   final Commande commande;
+
+  @override
+  State<OrderWidget> createState() => _OrderWidgetState();
+}
+
+class _OrderWidgetState extends State<OrderWidget> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 4, // Add some elevation to the card
+      elevation: 4,
       margin: const EdgeInsets.symmetric(vertical: 2),
       child: ListTile(
         onLongPress: () {
@@ -20,9 +26,11 @@ class OrderWidget extends StatelessWidget {
                 actions: [
                   ElevatedButton(
                       onPressed: () {
-                        ProductsService(Dio())
-                            .deleteOrder(commande.id.toString());
-                        ProductsService(Dio()).fetchOrders();
+                        setState(() {
+                          ProductsService(Dio())
+                              .deleteOrder(widget.commande.id.toString());
+                          ProductsService(Dio()).fetchOrders();
+                        });
                         Navigator.pop(context);
                       },
                       child: Text("Supprimer")),
@@ -42,18 +50,18 @@ class OrderWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '${commande.id} |  ${commande.nom} ${commande.prenom}',
+              '${widget.commande.id} |  ${widget.commande.nom} ${widget.commande.prenom}',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 5),
             Text(
-              '${commande.region}, ${commande.adresse}',
+              '${widget.commande.region}, ${widget.commande.adresse}',
               style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
           ],
         ),
         subtitle: Text(
-          'Référence: ${commande.reference}',
+          'Référence: ${widget.commande.reference}',
           style: TextStyle(fontSize: 14),
         ),
         trailing: Column(
@@ -65,7 +73,7 @@ class OrderWidget extends StatelessWidget {
               style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
             Text(
-              '${commande.quantite}',
+              '${widget.commande.quantite}',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ],

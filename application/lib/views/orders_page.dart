@@ -1,3 +1,4 @@
+import 'package:application/services/AuthService.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/orders_builder.dart';
@@ -17,7 +18,11 @@ class _OrdersPageState extends State<OrdersPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         floatingActionButton: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            AuthenticationService().logout();
+            Navigator.pushNamedAndRemoveUntil(
+                context, '/login', (route) => false);
+          },
           backgroundColor: Colors.blueAccent,
           child: Icon(Icons.logout),
         ),

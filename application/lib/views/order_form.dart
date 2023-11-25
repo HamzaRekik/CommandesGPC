@@ -17,8 +17,7 @@ class _OrderState extends State<Order> {
   String? selectedItemG; //variable take id of selected Governorat
   bool isVisible = false; // controls address text input visibility
 
-  List<Produit> _items =
-      []; //list of filtred products returned by fetchProduct()
+  late Future<List<String>> _items;
 
   @override
   void dispose() {
@@ -131,7 +130,8 @@ class _OrderState extends State<Order> {
                 icon: const Icon(Icons.keyboard_arrow_down),
                 value: selectedProduct,
                 onChanged: (item) => setState(() {
-                  ProductsService(Dio()).getProductReferences(item.toString());
+                  _items = ProductsService(Dio())
+                      .getProductReferences(item.toString());
                 }),
                 items: produits.map((String produit) {
                   return DropdownMenuItem<String>(
@@ -145,31 +145,22 @@ class _OrderState extends State<Order> {
               ),
               const SizedBox(height: 10.0),
               DropdownButtonFormField<String>(
-                decoration: const InputDecoration(
-                  labelText: "Référence",
-                  labelStyle: TextStyle(color: Colors.black),
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black)),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black)),
-                ),
-                icon: const Icon(Icons.keyboard_arrow_down),
-                value: selectedItem,
-                onChanged: (item) {
-                  setState(() {
-                    selectedItem = item;
-                  });
-                },
-                items: _items.map<DropdownMenuItem<String>>((Produit produit) {
-                  return DropdownMenuItem<String>(
-                    value: produit.id.toString(),
-                    child: Text(
-                      produit.name,
-                      style: const TextStyle(fontSize: 22),
-                    ),
-                  );
-                }).toList(),
-              ),
+                  decoration: const InputDecoration(
+                    labelText: "Référence",
+                    labelStyle: TextStyle(color: Colors.black),
+                    border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black)),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black)),
+                  ),
+                  icon: const Icon(Icons.keyboard_arrow_down),
+                  value: selectedItem,
+                  onChanged: (item) {
+                    setState(() {
+                      selectedItem = item;
+                    });
+                  },
+                  items: []),
               const SizedBox(height: 10.0),
               TextFormField(
                 controller: quanController,

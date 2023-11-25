@@ -18,11 +18,12 @@ class AuthenticationService {
     try {
       final credential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: emailAddress, password: password);
-      Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+      Navigator.pushNamedAndRemoveUntil(
+          context, '/orders_list', (route) => false);
     } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          backgroundColor: Colors.deepPurple,
+          backgroundColor: Colors.blueAccent,
           content: Text(
             'Invalid login credentials. Please check your email and password.',
             style: TextStyle(fontFamily: 'Poppins', color: Colors.white),

@@ -71,7 +71,7 @@ class ProductsService {
       Response response =
           await dio.get('http://192.168.1.8/api/produits/type/$type');
       for (var reference in response.data) {
-        references.add(reference);
+        references.add(reference['name']);
       }
       return references;
     } on DioException catch (e) {
