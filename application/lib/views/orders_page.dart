@@ -17,6 +17,12 @@ class _OrdersPageState extends State<OrdersPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.blueAccent,
+          elevation: 0,
+          title: Text('Liste Des Commandes'),
+          centerTitle: true,
+        ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             AuthenticationService().logout();
@@ -27,22 +33,9 @@ class _OrdersPageState extends State<OrdersPage> {
           child: Icon(Icons.logout),
         ),
         backgroundColor: Colors.grey[200],
-        body: CustomScrollView(
+        body: const CustomScrollView(
           physics: BouncingScrollPhysics(),
           slivers: [
-            SliverToBoxAdapter(
-              child: SizedBox(
-                height: 50,
-              ),
-            ),
-            SliverToBoxAdapter(
-                child: Text("Liste des commandes ",
-                    style: TextStyle(fontSize: 25))),
-            SliverToBoxAdapter(
-              child: SizedBox(
-                height: 20,
-              ),
-            ),
             OrdersBuilder(),
           ],
         ));

@@ -2,6 +2,7 @@ import 'package:application/services/AuthService.dart';
 import 'package:application/views/orders_page.dart';
 import 'package:application/views/login.dart';
 import 'package:application/views/order_form.dart';
+import 'package:application/views/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -27,9 +28,9 @@ class _GPCState extends State<GPC> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute:
-          AuthenticationService().userStatus() ? '/orders_list' : '/login',
+      initialRoute: '/splash_screen',
       routes: {
+        '/splash_screen': (context) => SplashScreen(),
         '/login': (context) => LoginScreen(),
         '/orders_list': (context) => OrdersPage(),
         '/make_order': (context) => Order()

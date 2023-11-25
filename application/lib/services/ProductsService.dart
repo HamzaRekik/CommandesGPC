@@ -23,7 +23,6 @@ class ProductsService {
   Future<void> deleteOrder(String id) async {
     try {
       await dio.delete('http://192.168.1.8/api/commandes/delete/$id');
-      fetchOrders();
     } on DioException catch (e) {
       print(e);
     }
@@ -45,33 +44,38 @@ class ProductsService {
           .post("http://192.168.1.8/api/commandes/create", data: order);
       int idCommande = response.data["id"];
       orderDetails(qte, reference, idCommande.toString());
+      print(response.statusCode);
+      print(response.data);
     } on DioException catch (e) {
-      print(e);
+      print(e.error);
     }
   }
 
   Future<void> orderDetails(
-      String qte, String produitID, String commandeID) async {
+      String qte, String reference, String orderId) async {
     Map<String, dynamic> orderDetail = {
-      'id_demande': commandeID,
-      'produit': produitID,
+      'id_demande': orderId,
+      'produit': reference,
       'qte': qte,
     };
     try {
-      await dio.post("http://192.168.1.8/api/c_details/create",
-          data: orderDetail);
+      Response response = await dio
+          .post("http://192.168.1.8/api/c_details/create", data: orderDetail);
+
+      print(response.statusCode);
+      print(response.data);
     } on DioException catch (e) {
       print(e);
     }
   }
 
-  Future<List<String>> getProductReferences(String type) async {
-    List<String> references = [];
+  Future<List<Map<String, dynamic>>> getProductReferences(String type) async {
+    List<Map<String, dynamic>> references = [];
     try {
       Response response =
           await dio.get('http://192.168.1.8/api/produits/type/$type');
       for (var reference in response.data) {
-        references.add(reference['name']);
+        references.add(reference);
       }
       return references;
     } on DioException catch (e) {

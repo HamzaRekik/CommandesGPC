@@ -26,12 +26,10 @@ class _OrderWidgetState extends State<OrderWidget> {
                 actions: [
                   ElevatedButton(
                       onPressed: () {
-                        setState(() {
-                          ProductsService(Dio())
-                              .deleteOrder(widget.commande.id.toString());
-                          ProductsService(Dio()).fetchOrders();
-                        });
+                        ProductsService(Dio())
+                            .deleteOrder(widget.commande.id.toString());
                         Navigator.pop(context);
+                        Navigator.pushReplacementNamed(context, '/orders_list');
                       },
                       child: Text("Supprimer")),
                   ElevatedButton(
@@ -45,7 +43,7 @@ class _OrderWidgetState extends State<OrderWidget> {
             },
           );
         },
-        contentPadding: const EdgeInsets.all(15), // Add content padding
+        contentPadding: const EdgeInsets.all(15),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

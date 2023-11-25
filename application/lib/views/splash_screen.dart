@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../services/AuthService.dart';
 import 'login.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -15,10 +16,9 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _navigateToMainScreen() async {
-    await Future.delayed(Duration(seconds: 10));
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => LoginScreen()),
-    );
+    await Future.delayed(Duration(seconds: 6));
+    Navigator.pushReplacementNamed(context,
+        AuthenticationService().userStatus() ? '/orders_list' : '/login');
   }
 
   @override

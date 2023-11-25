@@ -1,7 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-
-import '../models/produit.dart';
 import '../services/ProductsService.dart';
 import '../static/governorats.dart';
 
@@ -11,13 +9,20 @@ class Order extends StatefulWidget {
 }
 
 class _OrderState extends State<Order> {
-  final formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   String? selectedItem; // variable take id of selected product reference
   String? selectedProduct; // variable take id of selected product type
   String? selectedItemG; //variable take id of selected Governorat
   bool isVisible = false; // controls address text input visibility
 
-  late Future<List<String>> _items;
+  List<Map<String, dynamic>> references = [];
+  Future<void> getReferences(String value) async {
+    List<Map<String, dynamic>> result =
+        await ProductsService(Dio()).getProductReferences(value);
+    setState(() {
+      references = result;
+    });
+  }
 
   @override
   void dispose() {
@@ -55,19 +60,34 @@ class _OrderState extends State<Order> {
               const SizedBox(
                 height: 30,
               ),
-              TextFormField(
-                controller: nameController,
-                decoration: const InputDecoration(
-                  labelText: "Nom",
-                  labelStyle: TextStyle(color: Colors.black),
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black)),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black)),
+              Form(
+                key: formKey,
+                child: TextFormField(
+                  controller: nameController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer votre nom';
+                    }
+                    return null;
+                  },
+                  decoration: const InputDecoration(
+                    labelText: "Nom",
+                    labelStyle: TextStyle(color: Colors.black),
+                    border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black)),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black)),
+                  ),
                 ),
               ),
               const SizedBox(height: 10.0),
               TextFormField(
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Veuillez entrer votre prenom';
+                  }
+                  return null;
+                },
                 controller: lastNameController,
                 decoration: const InputDecoration(
                   labelText: "Prénom",
@@ -129,10 +149,7 @@ class _OrderState extends State<Order> {
                 ),
                 icon: const Icon(Icons.keyboard_arrow_down),
                 value: selectedProduct,
-                onChanged: (item) => setState(() {
-                  _items = ProductsService(Dio())
-                      .getProductReferences(item.toString());
-                }),
+                onChanged: (item) => getReferences(item.toString()),
                 items: produits.map((String produit) {
                   return DropdownMenuItem<String>(
                     value: produit,
@@ -160,7 +177,15 @@ class _OrderState extends State<Order> {
                       selectedItem = item;
                     });
                   },
-                  items: []),
+                  items: references.map((Map<String, dynamic> reference) {
+                    return DropdownMenuItem<String>(
+                      value: reference["id"].toString(),
+                      child: Text(
+                        reference['name'],
+                        style: const TextStyle(fontSize: 22),
+                      ),
+                    );
+                  }).toList()),
               const SizedBox(height: 10.0),
               TextFormField(
                 controller: quanController,
@@ -177,30 +202,27 @@ class _OrderState extends State<Order> {
               ElevatedButton(
                 onPressed: () {
                   FocusScope.of(context).unfocus();
-                  ProductsService(Dio()).makeOrder(
-                      nameController.text,
-                      lastNameController.text,
-                      selectedItemG.toString(),
-                      addController.text,
-                      quanController.text,
-                      selectedItem.toString());
-
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          actions: [
-                            ElevatedButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: Text("Okay"))
-                          ],
-                          title: Text("Cher Hamza Rekik"),
-                          content: const Text(
-                              "Votre commande a été passée avec succès!"),
-                        );
-                      });
+                  if (formKey.currentState!.validate()) {
+                    ProductsService(Dio()).makeOrder(
+                        nameController.text,
+                        lastNameController.text,
+                        selectedItemG.toString(),
+                        addController.text,
+                        quanController.text,
+                        selectedItem.toString());
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        backgroundColor: Colors.blueAccent,
+                        content: Text(
+                          'Commande passé avec success !',
+                          style: TextStyle(
+                              fontFamily: 'Poppins', color: Colors.white),
+                        ),
+                        behavior: SnackBarBehavior.floating,
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueAccent,

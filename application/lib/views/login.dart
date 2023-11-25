@@ -1,8 +1,5 @@
 import 'package:application/services/AuthService.dart';
-
 import 'package:flutter/material.dart';
-import 'package:rounded_loading_button/rounded_loading_button.dart';
-
 import 'order_form.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -13,8 +10,6 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
-  final RoundedLoadingButtonController _btnController =
-      RoundedLoadingButtonController();
 
   final _formKey = GlobalKey<FormState>();
 
